@@ -10,6 +10,7 @@ beforeAll(async () => {
   const uri = mongoServer.getUri();
   await mongoose.connect(uri);
   User = (await import("../models/User.model.js")).default;
+  await User.init();
 });
 
 afterAll(async () => {
