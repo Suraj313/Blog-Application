@@ -42,7 +42,7 @@ export const uploadProfileImage = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (user.profileImage) {
+    if (user.profileImage && user.profileImage.startsWith("/uploads/")) {
       const oldImagePath = path.join(
         process.cwd(),
         user.profileImage.replace("/", "")
@@ -53,7 +53,12 @@ export const uploadProfileImage = async (req, res) => {
       }
     }
 
-    user.profileImage = `/uploads/${req.file.filename}`;
+    user.profileImage =
+      req.file.path &&
+      (req.file.path.startsWith("http://") ||
+        req.file.path.startsWith("https://"))
+        ? req.file.path
+        : req.file.secure_url || `/uploads/${req.file.filename}`;
     await user.save();
 
     res.status(200).json({
@@ -75,13 +80,15 @@ export const removeProfileImage = async (req, res) => {
         .json({ message: "No profile image to remove" });
     }
 
-    const imagePath = path.join(
-      process.cwd(),
-      user.profileImage.replace("/", "")
-    );
+    if (user.profileImage.startsWith("/uploads/")) {
+      const imagePath = path.join(
+        process.cwd(),
+        user.profileImage.replace("/", "")
+      );
 
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
     }
 
     user.profileImage = null;

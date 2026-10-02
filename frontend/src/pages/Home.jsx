@@ -130,7 +130,11 @@ function Home() {
           >
             {post.featuredImage ? (
               <img
-                src={`${API_BASE_URL}${post.featuredImage}`}
+                src={
+                  post.featuredImage.startsWith("http")
+                    ? post.featuredImage
+                    : `${API_BASE_URL}${post.featuredImage}`
+                }
                 alt={post.title}
                 className="w-full h-48 object-cover"
               />

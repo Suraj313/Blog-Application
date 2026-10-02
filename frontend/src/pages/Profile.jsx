@@ -89,7 +89,11 @@ function Profile() {
         <div className="flex flex-col items-center mb-6">
           {profile.profileImage ? (
             <img
-              src={`${API_BASE_URL}${profile.profileImage}`}
+              src={
+                profile.profileImage.startsWith("http")
+                  ? profile.profileImage
+                  : `${API_BASE_URL}${profile.profileImage}`
+              }
               alt="Profile"
               className="w-36 h-36 rounded-full object-cover shadow-md mb-4"
             />

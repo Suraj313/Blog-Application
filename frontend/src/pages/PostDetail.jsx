@@ -72,7 +72,11 @@ function PostDetail() {
         {post.featuredImage && (
           <div className="w-full h-[360px] mb-8 overflow-hidden rounded-lg">
             <img
-              src={`${API_BASE_URL}${post.featuredImage}`}
+              src={
+                post.featuredImage.startsWith("http")
+                  ? post.featuredImage
+                  : `${API_BASE_URL}${post.featuredImage}`
+              }
               alt={post.title}
               className="w-full h-full object-cover"
             />

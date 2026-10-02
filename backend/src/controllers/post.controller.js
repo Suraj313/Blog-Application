@@ -8,14 +8,20 @@ export const createPost = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-const post = await Post.create({
-  title,
-  content,
-  category,
-  author: req.user._id,
-  status: req.user.role === "admin" ? "published" : "draft",
-  featuredImage: req.file ? `/uploads/${req.file.filename}` : null,
-});
+    const featuredImage = req.file
+      ? (req.file.path && (req.file.path.startsWith("http://") || req.file.path.startsWith("https://"))
+          ? req.file.path
+          : req.file.secure_url || `/uploads/${req.file.filename}`)
+      : null;
+
+    const post = await Post.create({
+      title,
+      content,
+      category,
+      author: req.user._id,
+      status: req.user.role === "admin" ? "published" : "draft",
+      featuredImage,
+    });
 
 
     res.status(201).json({
