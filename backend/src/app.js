@@ -9,11 +9,34 @@ import cors from "cors";
 import userRoutes from "./routes/user.routes.js";
 
 
+const allowedOrigins = [
+  "https://blog-application-eight-ochre.vercel.app",
+  "http://localhost:5173",
+  process.env.CLIENT_URL,
+]
+  .filter(Boolean)
+  .map((url) => url.replace(/\/$/, ""));
+
 const app = express();
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173", 
-  credentials: true
-}));
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const normalizedOrigin = origin.replace(/\/$/, "");
+      if (
+        allowedOrigins.includes(normalizedOrigin) ||
+        normalizedOrigin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(express.json());
 
