@@ -9,11 +9,28 @@ import cors from "cors";
 import userRoutes from "./routes/user.routes.js";
 
 
-const app = express();
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173", 
-  credentials: true
-}));
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map((url) => url.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+
+if (!allowedOrigins.includes("http://localhost:5173")) {
+  allowedOrigins.push("http://localhost:5173");
+}
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const normalizedOrigin = origin.replace(/\/$/, "");
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS error: Origin ${origin} is not allowed`));
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
