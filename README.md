@@ -4,15 +4,32 @@ A full-stack blog platform built with MongoDB, Express.js, React 19, Node.js, an
 
 ---
 
+## 🚀 Live Demo
+
+- **Live Application**: [https://blog-application-eight-ochre.vercel.app/](https://blog-application-eight-ochre.vercel.app/)
+
+### 👤 Standard User Access
+
+New visitors can create their own standard user account through the application's registration page.
+
+### 🛡️ Demo Admin Access
+To explore the administrative features (dashboard metrics, post moderation, category management, comment approvals), you can log in using the following credentials:
+- **Email:** `demo.admin@blogapp.com`
+- **Password:** `demoAdmin123!`
+
+*(Note: This account is provided for recruiters and visitors to explore the application's admin functionality.)*
+
+---
+
 ## Key Features
 
 - **Role-Based Access Control**: Secure authentication and authorization with JSON Web Tokens (JWT) and bcrypt password hashing, distinguishing between standard users and administrators.
 - **Post Management & Publishing Workflow**: Users can create draft posts; administrators can review, publish, edit, and delete any post.
 - **Search, Filter & Pagination**: Server-side pagination, keyword search across title and content, and category-based post filtering.
 - **Interactive Comment System**: Authenticated users can comment on posts, with an administrative approval pipeline before comments appear publicly.
-- **User Profile & Media Uploads**: Profile management with avatar image upload, replacement, and removal handled via Multer.
+- **User Profile & Media Uploads**: Profile management with avatar image upload, replacement, and removal utilizing Cloudinary for persistent storage.
 - **Admin Dashboard**: Dedicated administrative interface with platform metrics (posts, categories, comments, pending approvals) and moderation controls.
-- **Extensive Test Coverage**: 177 automated tests covering models, controllers, middleware, pages, and components.
+- **Automated Testing**: 177 tests across backend and frontend.
 
 ---
 
@@ -26,38 +43,42 @@ A full-stack blog platform built with MongoDB, Express.js, React 19, Node.js, an
 - **HTTP Client**: Axios
 - **Token Decoding**: `jwt-decode`
 - **Testing**: Jest, React Testing Library, Babel
+- **Deployment**: Vercel
 
 ### Backend
 - **Runtime & Framework**: Node.js (ES Modules), Express.js 5
-- **Database & ODM**: MongoDB, Mongoose 9
+- **Database & ODM**: MongoDB Atlas, Mongoose 9
 - **Authentication**: `jsonwebtoken` (JWT), `bcryptjs`
-- **File Handling**: Multer (disk storage)
+- **File Storage**: Cloudinary (via Multer)
 - **CORS**: `cors` middleware
 - **Testing**: Jest, `supertest`, `mongodb-memory-server`
+- **Deployment**: Render
 
 ---
 
 ## Application Architecture
 
-The project is structured as a decoupled client-server architecture:
+The project is structured as a decoupled client-server architecture deployed on modern cloud infrastructure:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    React 19 Frontend                    │
-│   (Vite, Tailwind CSS v4, React Router 7, Axios)       │
+│   (Vite, Tailwind CSS v4, React Router 7, Axios)        │
+│                [Deployed on Vercel]                     │
 └────────────────────────────┬────────────────────────────┘
                              │ HTTP / JSON (REST API)
                              ▼
 ┌─────────────────────────────────────────────────────────┐
 │                   Express 5 Backend                     │
-│   (Auth & Role Middleware, Controllers, Multer Uploads) │
-└────────────────────────────┬────────────────────────────┘
-                             │ Mongoose ODM
-                             ▼
-┌─────────────────────────────────────────────────────────┐
-│                    MongoDB Database                     │
-│       (Users, Posts, Categories, Comments)             │
-└─────────────────────────────────────────────────────────┘
+│   (Auth & Role Middleware, Controllers, Multer)         │
+│                [Deployed on Render]                     │
+└──────────────┬─────────────────────────────┬────────────┘
+               │ Mongoose ODM                │ API Integration
+               ▼                             ▼
+┌────────────────────────────┐ ┌──────────────────────────┐
+│      MongoDB Atlas         │ │       Cloudinary         │
+│ (Users, Posts, Categories) │ │ (Images & Media Storage) │
+└────────────────────────────┘ └──────────────────────────┘
 ```
 
 ---
@@ -293,11 +314,13 @@ BlogApp/
 
 ---
 
-## Future Deployment Notes
+## Deployment Architecture
 
-- **File Storage Considerations**: Uploaded profile and post images are currently handled via Multer and saved to the local filesystem in `backend/uploads/`. When deploying to serverless platforms or containerized hosts with ephemeral filesystems (such as Render free tier, Vercel, or Heroku), uploaded media should be transitioned to a cloud object storage service (e.g., AWS S3, Cloudinary) or a persistent disk volume to prevent file loss on instance restart.
-- **Client-Side Routing**: When hosting the frontend single-page application (SPA), the hosting provider should be configured with rewrite rules redirecting all routes to `/index.html` to prevent 404 errors upon direct navigation or refresh.
-- **Cross-Origin Resource Sharing (CORS)**: Set `CLIENT_URL` in the backend production environment to match the deployed frontend domain.
+The application is fully deployed and available for live demonstration.
+- **Frontend**: Hosted on **Vercel** with client-side routing configured via `vercel.json` rewrite rules.
+- **Backend**: Hosted on **Render** utilizing environment-based CORS configuration (`CLIENT_URL`) to securely communicate with the frontend.
+- **Database**: Hosted on **MongoDB Atlas** for secure, highly available data persistence.
+- **Media Storage**: Uploaded profile and post images are managed through **Cloudinary**, ensuring uploaded images persist independently of the backend server and providing optimized media delivery.
 
 ---
 
